@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_smart_form_symptom,access_smart_form,model_smart_form_symptom,base.group_user,1,0,0,0
+access_smart_form_symptom_manager,access_smart_form,model_smart_form_symptom,smart_form.group_smart_form_manager,1,1,1,1
+access_smart_form_diagnostic,access_smart_form,model_smart_form_diagnostic,base.group_user,1,0,0,0
+access_smart_form_diagnostic_manager,access_smart_form,model_smart_form_diagnostic,smart_form.group_smart_form_manager,1,1,1,1
+access_smart_form_disease,access_smart_form,model_smart_form_disease,base.group_user,1,0,0,0
+access_smart_form_disease_manager,access_smart_form,model_smart_form_disease,smart_form.group_smart_form_manager,1,1,1,1

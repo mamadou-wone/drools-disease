@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+   <data>
+   
+	<menuitem id="main_smart_form_menu" name="Alerte Santé" groups="smart_form.group_smart_form_manager,base.group_user" sequence="450"/>
+   <menuitem id="main_menu" name="Menu" parent="main_smart_form_menu" groups="base.group_user" /> 
+   
+   </data>
+   
+</odoo>

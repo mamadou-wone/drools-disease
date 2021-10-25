@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="diagnostic_view_form" model="ir.ui.view">
+            <field name="name">smart_form.diagnostic.view.form</field>
+            <field name="model">smart_form.diagnostic</field>
+            <field name="arch" type="xml">
+                <form string="diagnostic Form">
+                    <header>
+                        <button name="get_diagnostic" type="object" string="Diagnostique" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="patient_last_name"/>
+                            </group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="patient_first_name" />
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="patient_address"/>
+                            </group>
+                            <group>
+                                <field name="diagnostic_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="patient_age"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Symptômes du patient">
+                                <field name="symptom_ids"/>
+                            </page>
+                            <page string="Maladies potentielles du patient">
+                                <field name="disease_ids"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="diagnostic_view_tree" model="ir.ui.view">
+            <field name="name">smart_form.diagnostic.view.tree</field>
+            <field name="model">smart_form.diagnostic</field>
+            <field name="arch" type="xml">
+                <tree string="diagnostic Tree">
+                    <field name="name"/>
+                    <field name="patient_last_name"/>
+                    <field name="patient_first_name"/>
+                    <field name="patient_address"/>
+                    <field name="patient_age"/>
+                    <field name="symptom_ids"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="diagnostic_list_action">
+            <field name="name">Diagnostique</field>
+            <field name="res_model">smart_form.diagnostic</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Créer une nouvelle diagnostic !</p>
+            </field>
+        </record>
+
+        <menuitem id="diagnostic_menu" name="Diagnostique" parent="main_menu" action="diagnostic_list_action" sequence="1"/>
+
+    </data>
+</odoo>

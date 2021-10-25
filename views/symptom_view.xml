@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="symptom_view_form" model="ir.ui.view">
+            <field name="name">smart_form.symptom.view.form</field>
+            <field name="model">smart_form.symptom</field>
+            <field name="arch" type="xml">
+                <form string="symptom Form">
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="symptom_view_tree" model="ir.ui.view">
+            <field name="name">smart_form.symptom.view.tree</field>
+            <field name="model">smart_form.symptom</field>
+            <field name="arch" type="xml">
+                <tree string="symptom Tree">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="symptom_list_action" model="ir.actions.act_window">
+            <field name="name">Symptômes</field>
+            <field name="res_model">smart_form.symptom</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Créer un nouveau symtôme !
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="symptom_menu" name="Symptômes" groups="base.group_user" parent="main_menu" action="symptom_list_action" sequence="2"/>
+
+    </data>
+</odoo>

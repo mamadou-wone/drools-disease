@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="disease_view_form" model="ir.ui.view">
+            <field name="name">smart_form.disease.view.form</field>
+            <field name="model">smart_form.disease</field>
+            <field name="arch" type="xml">
+                <form string="Disease Form">
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="score"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="disease_view_tree" model="ir.ui.view">
+            <field name="name">smart_form.disease.view.tree</field>
+            <field name="model">smart_form.disease</field>
+            <field name="arch" type="xml">
+                <tree string="Disease Tree">
+                    <field name="name"/>
+                    <field name="score"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="disease_list_action" model="ir.actions.act_window">
+            <field name="name">Maladies</field>
+            <field name="res_model">smart_form.disease</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Créer une maladie  !
+              </p>
+            </field>
+        </record>
+
+        <!-- <menuitem id="symptom_menu" name="Symtômes" groups="base.group_user" parent="main_menu" action="symptom_list_action" sequence="2"/> -->
+
+    </data>
+</odoo>
