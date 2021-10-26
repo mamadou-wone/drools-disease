@@ -35,58 +35,67 @@ class Diagnostic(models.Model):
                 name = symtom.name
                 symptoms_list.append(name)
                 
-        diagnostics = [diagnostic.Diagnostic(symptoms=[item]) for item in symptoms_list]        
-        # decision = diagnostic.Diagnostic(symptoms=[name])
-        # diagnostics.append(decision)
-        print(diagnostics)
-        
-        print(symptoms_list)         
-        insert_elements_command = InsertElementsCommand(objects=diagnostics, out_identifier='decision').initialize()
+        if len(symptoms_list) > 0:
+            diagnostics = [diagnostic.Diagnostic(symptoms=[item]) for item in symptoms_list]
+                    
+            insert_elements_command = InsertElementsCommand(objects=diagnostics, out_identifier='decision').initialize()
 
-        Drools.add_command(insert_elements_command)
+            Drools.add_command(insert_elements_command)
 
-        try:
-            response = Drools.execute_commands()
-        except DroolsException as de:
-            print(de)
+            try:
+                response = Drools.execute_commands()
+            except DroolsException as de:
+                print(de)
+                
+            drools_diagnostic_response = response['decision']
+            print(diagnostics)
             
-        drools_diagnostic_response = response['decision']
-        print(drools_diagnostic_response)
-        
-        diseases = [data["diseases"] for data in drools_diagnostic_response]
-        min_length = min([len(data["diseases"]) for data in drools_diagnostic_response])
-        
-        result = []
-        score = []
-        for item in diseases:
-            for i in range(min_length):
-                result.append(item[i].split(",")[0])
-                score.append(item[i].split(",")[1])
-          
-        other_disease = []      
-        other_score = []   
-        for item in diseases:
-            for i in range(min_length ,len(item)):
-                other_disease.append(item[i].split(",")[0])
-                other_score.append(item[i].split(",")[1])  
+            print(symptoms_list) 
+            print(drools_diagnostic_response)
+            print(len(drools_diagnostic_response))
+            
+            if len(drools_diagnostic_response) > len(symptoms_list):
+                for item in drools_diagnostic_response:
+                    if item["symptoms"][0] not in symptoms_list:
+                        print(item["symptoms"][0])
+                        print(drools_diagnostic_response.index(item))
+                        drools_diagnostic_response.pop(drools_diagnostic_response.index(item))
+            
+            print(drools_diagnostic_response)
+            diseases = [data["diseases"] for data in drools_diagnostic_response]
+            min_length = min([len(data["diseases"]) for data in drools_diagnostic_response])
+            
+            result = []
+            score = []
+            for item in diseases:
+                for i in range(min_length):
+                    result.append(item[i].split(",")[0])
+                    score.append(item[i].split(",")[1])
+            
+            other_disease = []      
+            other_score = []   
+            for item in diseases:
+                for i in range(min_length ,len(item)):
+                    other_disease.append(item[i].split(",")[0])
+                    other_score.append(item[i].split(",")[1])  
 
-        result = result + other_disease
-        score = score + other_score
-        
-        final_score = []
-        final_list = []
-        for d in range(len(result)):
-            if result[d] not in final_list:
-                final_score.append(score[d])
-                final_list.append(result[d])
-            else:
-                final_score[final_list.index(result[d])] = int(final_score[final_list.index(result[d])]) + int(score[d])
-        
-        print(final_list)
-        print(final_score) 
-        
-        diseases = [self.env["smart_form.disease"].create({"name": final_list[item], "score": final_score[item]}) for item in range(len(final_list))]
-        self.disease_ids = [(6, 0, [disease.id for disease in diseases])]  
+            result = result + other_disease
+            score = score + other_score
+            
+            final_score = []
+            final_list = []
+            for d in range(len(result)):
+                if result[d] not in final_list:
+                    final_score.append(score[d])
+                    final_list.append(result[d])
+                else:
+                    final_score[final_list.index(result[d])] = int(final_score[final_list.index(result[d])]) + int(score[d])
+            
+            print(final_list)
+            print(final_score) 
+            
+            diseases = [self.env["smart_form.disease"].create({"name": final_list[item], "score": final_score[item]}) for item in range(len(final_list))]
+            self.disease_ids = [(6, 0, [disease.id for disease in diseases])]  
         # drools_diagnostic_response = []
         
         # print(result)
