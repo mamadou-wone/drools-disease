@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import fields, models, api
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from ..utils import *
 
 from datetime import datetime
@@ -9,19 +12,22 @@ from python_drools_sdk.kie.drools import Drools
 from python_drools_sdk.utils import helpers
 from python_drools_sdk.exceptions.drools_exception import DroolsException
 
-Drools.KIE_SERVER_CONTAINER_PACKAGE = 'com.myspace.tanoor' 
-Drools.KIE_SERVER_USERNAME = 'admin'
-Drools.KIE_SERVER_PASSWORD = 'admin'
-Drools.KIE_SERVER_ROOT_URL = 'http://172.17.0.1:8180'
-Drools.KIE_SERVER_CONTAINER_ID = 'tanoor_1.0.0-SNAPSHOT' 
 
+Drools.KIE_SERVER_CONTAINER_PACKAGE = os.getenv('KIE_SERVER_CONTAINER_PACKAGE') 
+Drools.KIE_SERVER_USERNAME = os.getenv('KIE_SERVER_USERNAME') 
+Drools.KIE_SERVER_PASSWORD = os.getenv('KIE_SERVER_PASSWORD') 
+Drools.KIE_SERVER_ROOT_URL = os.getenv('KIE_SERVER_ROOT_URL')  
+Drools.KIE_SERVER_CONTAINER_ID = os.getenv('KIE_SERVER_CONTAINER_ID')  
+Drools.KIE_SESSION_NAME = os.getenv('KIE_SESSION_NAME') 
 class Diagnostic(models.Model):
     _name = 'smart_form.diagnostic'
+    
     
     name = fields.Char(string=u"Référence de la consultation")
     patient_last_name = fields.Char(string="Nom", required=True)
     patient_first_name = fields.Char(string=u"Prénom", required=True)
     patient_address = fields.Char(string="Adresse", required=True)
+    patient_phone_number = fields.Char(string=u"Numéro de téléphone")
     patient_age = fields.Integer(string="Âge", required=True)
     symptom_ids = fields.Many2many('smart_form.symptom', string=u"Symptômes", required=True)
     diagnostic_date = fields.Datetime(string=u'Date de la consultation', readonly=True, default=fields.Datetime.now())
@@ -36,7 +42,7 @@ class Diagnostic(models.Model):
                 symptoms_list.append(name)
                 
         if len(symptoms_list) > 0:
-            diagnostics = [diagnostic.Diagnostic(symptoms=[item]) for item in symptoms_list]
+            diagnostics = [diagnostic.Diagnostic(age=self.patient_age, symptoms=[item]) for item in symptoms_list]
                     
             insert_elements_command = InsertElementsCommand(objects=diagnostics, out_identifier='decision').initialize()
 
@@ -48,12 +54,7 @@ class Diagnostic(models.Model):
                 print(de)
                 
             drools_diagnostic_response = response['decision']
-            print(diagnostics)
-            
-            print(symptoms_list) 
-            print(drools_diagnostic_response)
-            print(len(drools_diagnostic_response))
-            
+        
             if len(drools_diagnostic_response) > len(symptoms_list):
                 for item in drools_diagnostic_response:
                     if item["symptoms"][0] not in symptoms_list:
@@ -90,24 +91,8 @@ class Diagnostic(models.Model):
                     final_list.append(result[d])
                 else:
                     final_score[final_list.index(result[d])] = int(final_score[final_list.index(result[d])]) + int(score[d])
-            
-            print(final_list)
-            print(final_score) 
-            
+
             diseases = [self.env["smart_form.disease"].create({"name": final_list[item], "score": final_score[item]}) for item in range(len(final_list))]
             self.disease_ids = [(6, 0, [disease.id for disease in diseases])]  
-        # drools_diagnostic_response = []
-        
-        # print(result)
-        # print(score)        
-        # decision = diagnostic.Diagnostic(symptoms=symptomsList)
-        # insert_command = InsertObjectCommand(object=decision, out_identifier="decision").initialize()
-        # Drools.add_command(insert_command)     
-        # try:
-        #     response = Drools.execute_commands()
-        # except DroolsException as de:
-        #     print(de)
-
-        # drools_diagnostic_response = response['decision']
-        # diseases = [self.env["smart_form.disease"].create({"name": item.split(",")[0], "score": item.split(",")[1]}) for item in drools_diagnostic_response['diseases']]
-        # self.disease_ids = [(6, 0, [disease.id for disease in diseases])]    
+        else:
+            self.disease_ids = [(6, 0, [])]   

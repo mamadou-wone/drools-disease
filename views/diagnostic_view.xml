@@ -24,10 +24,13 @@
                         </group>
                         <group>
                             <group>
-                                <field name="patient_address"/>
+                                <field name="patient_phone_number"/>
                             </group>
                             <group>
                                 <field name="diagnostic_date"/>
+                            </group>
+                            <group>
+                                <field name="patient_address"/>
                             </group>
                         </group>
                         <group>
