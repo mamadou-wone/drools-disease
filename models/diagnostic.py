@@ -12,7 +12,6 @@ from python_drools_sdk.kie.drools import Drools
 from python_drools_sdk.utils import helpers
 from python_drools_sdk.exceptions.drools_exception import DroolsException
 
-
 Drools.KIE_SERVER_CONTAINER_PACKAGE = os.getenv('KIE_SERVER_CONTAINER_PACKAGE') 
 Drools.KIE_SERVER_USERNAME = os.getenv('KIE_SERVER_USERNAME') 
 Drools.KIE_SERVER_PASSWORD = os.getenv('KIE_SERVER_PASSWORD') 
@@ -32,6 +31,8 @@ class Diagnostic(models.Model):
     symptom_ids = fields.Many2many('smart_form.symptom', string=u"Symptômes", required=True)
     diagnostic_date = fields.Datetime(string=u'Date de la consultation', readonly=True, default=fields.Datetime.now())
     disease_ids = fields.Many2many("smart_form.disease", string="Maladies", readonly=True)
+    patient_job = fields.Char(string="Profession")
+    observation = fields.Text(string="Observation")
     
     def get_diagnostic(self):
         symptoms_list = []
@@ -42,7 +43,7 @@ class Diagnostic(models.Model):
                 symptoms_list.append(name)
                 
         if len(symptoms_list) > 0:
-            diagnostics = [diagnostic.Diagnostic(age=self.patient_age, symptoms=[item]) for item in symptoms_list]
+            diagnostics = [diagnostic.Diagnostic(age=self.patient_age, symptoms=[item], profession=self.patient_job) for item in symptoms_list]
                     
             insert_elements_command = InsertElementsCommand(objects=diagnostics, out_identifier='decision').initialize()
 
@@ -92,7 +93,14 @@ class Diagnostic(models.Model):
                 else:
                     final_score[final_list.index(result[d])] = int(final_score[final_list.index(result[d])]) + int(score[d])
 
+            observation_list = []
+            for response in drools_diagnostic_response:
+                print(response['observation'])
+                if response['observation'] != None:
+                    observation_list.append(response['observation'])
+            
             diseases = [self.env["smart_form.disease"].create({"name": final_list[item], "score": final_score[item]}) for item in range(len(final_list))]
             self.disease_ids = [(6, 0, [disease.id for disease in diseases])]  
+            self.observation = ', '.join(observation_list)
         else:
             self.disease_ids = [(6, 0, [])]   

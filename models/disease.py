@@ -6,5 +6,6 @@ class Disease(models.Model):
     
     name = fields.Char(string="Maladie")
     score = fields.Char(string="Score")
+    observation = fields.Text(string="Observation")
     
     

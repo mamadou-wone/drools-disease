@@ -4,7 +4,7 @@
     'depends': ['base'],
     'author': 'Baamtu Sarl Senegal',
     'website': 'http://www.baamtu.com',
-    'description': "beauty salon point of sale",
+    'description': "",
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
